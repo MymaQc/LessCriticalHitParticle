@@ -1,0 +1,8 @@
+name: LessCriticalHitParticle
+main: lesscriticalhitparticle\LessCriticalHitParticle
+
+src-namespace-prefix: lesscriticalhitparticle
+
+author: Myma
+api: [ 5.0.0 ]
+version: 1.0.0
