@@ -32,7 +32,7 @@ final class LessCriticalHitParticle extends PluginBase {
      */
     protected function onEnable(): void {
         $this->float = floatval($this->getConfig()->getNested("less-critical-hit-particle.settings.float", 55.0));
-        $this->getServer()->getPluginManager()->registerEvent(DataPacketSendEvent::class, static function (DataPacketSendEvent $event): void {
+        $this->getServer()->getPluginManager()->registerEvent(DataPacketSendEvent::class, function (DataPacketSendEvent $event): void {
             $packets = $event->getPackets();
             foreach ($packets as $packet) {
                 if (!($packet instanceof AnimatePacket && $packet->action === AnimatePacket::ACTION_CRITICAL_HIT)) {
