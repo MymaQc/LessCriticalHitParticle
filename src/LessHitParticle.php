@@ -1,6 +1,6 @@
 <?php
 
-namespace lesscriticalhitparticle;
+namespace lesshitparticle;
 
 use pocketmine\event\EventPriority;
 use pocketmine\event\server\DataPacketSendEvent;
@@ -9,14 +9,19 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\utils\SingletonTrait;
 use ReflectionException;
 
-final class LessCriticalHitParticle extends PluginBase {
+final class LessHitParticle extends PluginBase {
 
     use SingletonTrait;
 
     /**
      * @var float
      */
-    private float $float = 55.0;
+    private float $criticalHitFloat = 55.0;
+
+    /**
+     * @var float
+     */
+    private float $magicalHitFloat = 15.0;
 
     /**
      * @return void
@@ -31,14 +36,23 @@ final class LessCriticalHitParticle extends PluginBase {
      * @throws ReflectionException
      */
     protected function onEnable(): void {
-        $this->float = floatval($this->getConfig()->getNested("less-critical-hit-particle.settings.float", 55.0));
+        $config = $this->getConfig();
+        $this->criticalHitFloat = (float) $config->getNested("less-hit-particle.settings.float.critical-hit", 55.0);
+        $this->magicalHitFloat = (float) $config->getNested("less-hit-particle.settings.float.magical-hit", 15.0);
         $this->getServer()->getPluginManager()->registerEvent(DataPacketSendEvent::class, function (DataPacketSendEvent $event): void {
             $packets = $event->getPackets();
             foreach ($packets as $packet) {
-                if (!($packet instanceof AnimatePacket && $packet->action === AnimatePacket::ACTION_CRITICAL_HIT)) {
+                if (!$packet instanceof AnimatePacket) {
                     continue;
                 }
-                $packet->data = $this->float;
+                switch ($packet->action) {
+                    case AnimatePacket::ACTION_CRITICAL_HIT:
+                        $packet->data = $this->criticalHitFloat;
+                        break;
+                    case AnimatePacket::ACTION_MAGICAL_CRITICAL_HIT:
+                        $packet->data = $this->magicalHitFloat;
+                        break;
+                }
             }
         }, EventPriority::NORMAL, $this);
         $this->getLogger()->notice($this->getName() . " ✅");
